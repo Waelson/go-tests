@@ -1,8 +1,9 @@
-package repository
+package repository_test
 
 import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/Waelson/go-tests/internal/model"
+	"github.com/Waelson/go-tests/internal/repository"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,9 +16,9 @@ func TestFindAll_Success(t *testing.T) {
 	defer db.Close()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "email"}).AddRow(1, "waelson", "123456", "test@test.com")
-	mock.ExpectQuery(SELECT_ALL_USERS).WillReturnRows(rows)
+	mock.ExpectQuery(repository.SELECT_ALL_USERS).WillReturnRows(rows)
 
-	repo := NewUserRepository(db)
+	repo := repository.NewUserRepository(db)
 	users, err := repo.FindAll()
 
 	assert.Equal(t, 1, len(users))
@@ -34,9 +35,9 @@ func TestFindAll_Error(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(SELECT_ALL_USERS).WillReturnError(assert.AnError)
+	mock.ExpectQuery(repository.SELECT_ALL_USERS).WillReturnError(assert.AnError)
 
-	repo := NewUserRepository(db)
+	repo := repository.NewUserRepository(db)
 	users, err := repo.FindAll()
 
 	assert.Nil(t, users)
@@ -56,7 +57,7 @@ func TestSave_Success(t *testing.T) {
 	user := model.User{Username: "waelson", Password: "123456", Email: "test@test.com"}
 	mock.ExpectExec("INSERT INTO users").WithArgs(user.Username, user.Password, user.Email).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	repo := NewUserRepository(db)
+	repo := repository.NewUserRepository(db)
 	savedUser, err := repo.Save(user)
 
 	assert.Equal(t, user, savedUser)
@@ -76,7 +77,7 @@ func TestSave_Error(t *testing.T) {
 	user := model.User{Username: "waelson", Password: "123456", Email: "test@test.com"}
 	mock.ExpectExec("INSERT INTO users").WithArgs(user.Username, user.Password, user.Email).WillReturnError(assert.AnError)
 
-	repo := NewUserRepository(db)
+	repo := repository.NewUserRepository(db)
 	savedUser, err := repo.Save(user)
 
 	assert.Equal(t, model.User{}, savedUser)
