@@ -1,4 +1,4 @@
-# go-tests
+# App para demonstrar o uso de testes unitários em Go
 
 ### Geração dos mocks
 `
