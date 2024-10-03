@@ -3,6 +3,8 @@ package service
 import (
 	"github.com/Waelson/go-tests/internal/model"
 	"github.com/Waelson/go-tests/internal/repository"
+	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 type UserService interface {
@@ -15,10 +17,18 @@ type userService struct {
 }
 
 func (s *userService) FindAll() ([]model.User, error) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_service] FindAll took %v", time.Since(start))
+	}()
 	return s.userRepository.FindAll()
 }
 
 func (s *userService) Save(user model.User) (model.User, error) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_service] Save took %v", time.Since(start))
+	}()
 	return s.userRepository.Save(user)
 }
 

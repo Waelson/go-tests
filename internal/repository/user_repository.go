@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"github.com/Waelson/go-tests/internal/model"
+	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 const SELECT_ALL_USERS = "SELECT id, username, password, email FROM users"
@@ -17,6 +19,10 @@ type userRepository struct {
 }
 
 func (r *userRepository) FindAll() ([]model.User, error) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_repository] FindAll took %v", time.Since(start))
+	}()
 	rows, err := r.db.Query(SELECT_ALL_USERS)
 	if err != nil {
 		return nil, err
@@ -37,6 +43,11 @@ func (r *userRepository) FindAll() ([]model.User, error) {
 }
 
 func (r *userRepository) Save(user model.User) (model.User, error) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_repository] Save took %v", time.Since(start))
+	}()
+
 	_, err := r.db.Exec("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", user.Username, user.Password, user.Email)
 	if err != nil {
 		return model.User{}, err

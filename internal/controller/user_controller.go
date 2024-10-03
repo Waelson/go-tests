@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"github.com/Waelson/go-tests/internal/model"
 	"github.com/Waelson/go-tests/internal/service"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 )
 
 type UserController interface {
@@ -25,6 +27,11 @@ type userController struct {
 // @Success      200  {array}   model.User
 // @Router       /users [get]
 func (u *userController) List(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_controller] List users took %v", time.Since(start))
+	}()
+
 	users, err := u.userService.FindAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -52,6 +59,11 @@ func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 // @Success      201  {string} string
 // @Router       /users [post]
 func (u *userController) Save(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+	defer func() {
+		log.Infof("[user_controller] Save user took %v", time.Since(start))
+	}()
+
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {

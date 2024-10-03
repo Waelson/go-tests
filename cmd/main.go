@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/mattn/go-sqlite3"
+	log "github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"log"
 	"net/http"
 )
 
@@ -24,6 +24,11 @@ import (
 // @BasePath /
 func main() {
 
+	log.SetFormatter(&log.TextFormatter{})
+	log.SetLevel(log.InfoLevel)
+
+	log.Infof("[main] Starting application")
+
 	database, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
 		log.Fatal(err)
@@ -34,12 +39,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Infof("[main] Creating components")
 	userRepository := repository.NewUserRepository(database)
 	userService := service.NewUserService(userRepository)
 	userController := controller.NewUserController(userService)
 
 	r := chi.NewRouter()
 
+	log.Infof("[main] Registering routes")
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
@@ -50,6 +57,6 @@ func main() {
 		r.Post("/", userController.Save) // POST /users
 	})
 
-	log.Println("Servidor executando na porta 8080")
+	log.Infof("[main] Web server started at :8080")
 	http.ListenAndServe(":8080", r)
 }

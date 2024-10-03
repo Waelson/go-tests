@@ -82,6 +82,7 @@ const docTemplate = `{
     },
     "definitions": {
         "model.User": {
+            "description": "User information with user id, email, password and username",
             "type": "object",
             "properties": {
                 "email": {
