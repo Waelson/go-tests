@@ -39,4 +39,9 @@ lint:
 # Rodar todos os comandos acima
 all: fmt lint test coverage
 
+swagger:
+	@echo "Generating swagger documentation..."
+	swag init -d cmd/,internal/controller --parseDependency -o internal/docs
+	mv internal/docs/swagger.json internal/docs/swagger.yaml docs/specs
+
 .PHONY: test coverage clean fmt lint all

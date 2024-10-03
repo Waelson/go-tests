@@ -16,6 +16,14 @@ type userController struct {
 	userService service.UserService
 }
 
+// List godoc
+// @Summary      List user
+// @Description  get users
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}   model.User
+// @Router       /users [get]
 func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 	users, err := u.userService.FindAll()
 	if err != nil {
@@ -34,6 +42,15 @@ func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+// Save godoc
+// @Summary      Save user
+// @Description  save user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user body model.User true "User"
+// @Success      201  {string} string
+// @Router       /users [post]
 func (u *userController) Save(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
