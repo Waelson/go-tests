@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/Waelson/go-tests/internal/controller"
 	_ "github.com/Waelson/go-tests/internal/docs"
 	"github.com/Waelson/go-tests/internal/repository"
@@ -13,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
+	"os"
 )
 
 // @title Simples App Golang
@@ -24,21 +26,31 @@ import (
 // @BasePath /
 func main() {
 
+	fmt.Println("[main] Starting application")
+	logFile, err := os.OpenFile("/logs/app.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Println("Failed to open log file: %v", err)
+	}
+	log.SetOutput(logFile)
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetLevel(log.InfoLevel)
 
 	log.Infof("[main] Starting application")
 
+	fmt.Println("[main] Open database")
 	database, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	fmt.Println("[main] Creating tables")
 	err = util.CreateTables(database)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal(err)
 	}
 
+	fmt.Println("[main] Creating components")
 	log.Infof("[main] Creating components")
 	userRepository := repository.NewUserRepository(database)
 	userService := service.NewUserService(userRepository)
@@ -46,6 +58,7 @@ func main() {
 
 	r := chi.NewRouter()
 
+	fmt.Println("[main] Registering routes")
 	log.Infof("[main] Registering routes")
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)

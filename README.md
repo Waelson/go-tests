@@ -9,3 +9,8 @@ mockgen -source=internal/infra/repository.go -destination=internal/infra/reposit
 `
 make test
 `
+
+### Gerar documentação Swagger
+`
+make swagger
+`
