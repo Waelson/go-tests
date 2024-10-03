@@ -43,5 +43,5 @@ swagger:
 	@echo "Generating swagger documentation..."
 	swag init -d cmd/,internal/controller --parseDependency -o internal/docs
 	mv internal/docs/swagger.json internal/docs/swagger.yaml docs/specs
-
+	@echo "Done!"
 .PHONY: test coverage clean fmt lint all
