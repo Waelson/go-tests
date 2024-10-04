@@ -8,7 +8,7 @@
 *.so
 *.dylib
 .idea
-.elastic_search/**
+.elastic_search/*
 .logs/*.log
 
 # Test binary, built with `go test -c`
