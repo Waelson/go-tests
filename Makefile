@@ -44,4 +44,13 @@ swagger:
 	swag init -d cmd/,internal/controller,internal/model --parseDependency -o internal/docs
 	mv internal/docs/swagger.json internal/docs/swagger.yaml docs/specs
 	@echo "Done!"
+
+stack_up:
+	@echo "Running docker-compose..."
+	docker-compose up --build -d
+
+stack_down:
+	@echo "Stopping docker-compose..."
+	docker-compose down
+
 .PHONY: test coverage clean fmt lint all
