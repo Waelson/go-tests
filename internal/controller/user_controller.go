@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Waelson/go-tests/internal/model"
 	"github.com/Waelson/go-tests/internal/service"
+	"github.com/Waelson/go-tests/internal/util"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"time"
@@ -15,7 +16,8 @@ type UserController interface {
 }
 
 type userController struct {
-	userService service.UserService
+	userService   service.UserService
+	metricsRecord util.MetricsRecord
 }
 
 // List godoc
@@ -30,6 +32,7 @@ func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	defer func() {
 		log.Infof("[user_controller] List users took %v", time.Since(start))
+		u.metricsRecord.IncrementTotalRequest()
 	}()
 
 	users, err := u.userService.FindAll()
@@ -62,6 +65,7 @@ func (u *userController) Save(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	defer func() {
 		log.Infof("[user_controller] Save user took %v", time.Since(start))
+		u.metricsRecord.IncrementTotalRequest()
 	}()
 
 	var user model.User
@@ -81,5 +85,8 @@ func (u *userController) Save(w http.ResponseWriter, r *http.Request) {
 }
 
 func NewUserController(userService service.UserService) UserController {
-	return &userController{userService}
+	return &userController{
+		userService:   userService,
+		metricsRecord: util.NewMetricsRecord(),
+	}
 }
