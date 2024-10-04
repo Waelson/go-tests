@@ -6,22 +6,22 @@ import (
 )
 
 type MetricsRecord interface {
-	IncrementTotalRequest()
+	IncrementTotalRequest(tags ...string)
 }
 
 type metricsRecord struct {
-	counter prometheus.Counter
+	counter *prometheus.CounterVec
 }
 
-func (m *metricsRecord) IncrementTotalRequest() {
-	m.counter.Inc()
+func (m *metricsRecord) IncrementTotalRequest(tags ...string) {
+	m.counter.WithLabelValues(tags...).Inc()
 }
 
 func NewMetricsRecord() MetricsRecord {
-	counter := promauto.NewCounter(prometheus.CounterOpts{
+	counter := promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "requests_total",
 		Help: "The total number of requests",
-	})
+	}, []string{"method", "path", "status_code"})
 
 	return &metricsRecord{
 		counter: counter,

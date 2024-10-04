@@ -32,11 +32,11 @@ func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	defer func() {
 		log.Infof("[user_controller] List users took %v", time.Since(start))
-		u.metricsRecord.IncrementTotalRequest()
 	}()
 
 	users, err := u.userService.FindAll()
 	if err != nil {
+		u.metricsRecord.IncrementTotalRequest("GET", "/users", "500")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -45,11 +45,13 @@ func (u *userController) List(w http.ResponseWriter, r *http.Request) {
 
 	response, err := json.Marshal(users)
 	if err != nil {
+		u.metricsRecord.IncrementTotalRequest("GET", "/users", "500")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Write(response)
+	u.metricsRecord.IncrementTotalRequest("GET", "/users", "200")
 }
 
 // Save godoc
@@ -65,23 +67,25 @@ func (u *userController) Save(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	defer func() {
 		log.Infof("[user_controller] Save user took %v", time.Since(start))
-		u.metricsRecord.IncrementTotalRequest()
 	}()
 
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		u.metricsRecord.IncrementTotalRequest("POST", "/users", "500")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	_, err = u.userService.Save(user)
 	if err != nil {
+		u.metricsRecord.IncrementTotalRequest("POST", "/users", "500")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+	u.metricsRecord.IncrementTotalRequest("POST", "/users", "200")
 }
 
 func NewUserController(userService service.UserService) UserController {

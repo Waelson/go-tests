@@ -45,12 +45,20 @@ swagger:
 	mv internal/docs/swagger.json internal/docs/swagger.yaml docs/specs
 	@echo "Done!"
 
-stack_up:
+
+stack_build:
 	@echo "Running docker-compose..."
 	docker-compose up --build -d
+
+stack_up:
+	@echo "Running docker-compose..."
+	docker-compose up -d
 
 stack_down:
 	@echo "Stopping docker-compose..."
 	docker-compose down
+k6:
+	@echo "Running k6..."
+	k6 run tests/k6/script.js
 
 .PHONY: test coverage clean fmt lint all
