@@ -3,7 +3,7 @@ version: '3'
 services:
   webapp:
     build:
-      context: .
+      context: ./webapp
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -20,7 +20,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana
@@ -31,7 +31,7 @@ services:
     image: docker.elastic.co/beats/filebeat:7.10.0
     volumes:
       - logs:/logs
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
     depends_on:
       - webapp
 
@@ -50,7 +50,7 @@ services:
     ports:
       - "9200:9200"
     volumes:
-      - ./es01:/usr/share/elasticsearch/data
+      - ./elastic_search/data/es01:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0
