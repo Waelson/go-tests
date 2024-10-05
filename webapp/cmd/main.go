@@ -53,24 +53,27 @@ func main() {
 	}
 
 	log.Infof("[main] Creating components")
+	metricsRecord := util.NewMetricsRecord()
 	userRepository := repository.NewUserRepository(database)
 	userService := service.NewUserService(userRepository)
-	userController := controller.NewUserController(userService)
+	userController := controller.NewUserController(userService, metricsRecord)
+	metricMiddleware := util.NewMetricMiddleware(metricsRecord)
 
 	r := chi.NewRouter()
 
 	log.Infof("[main] Registering routes")
-	r.Use(middleware.Logger)
+	r.Use(metricMiddleware.Handler)
 	r.Use(middleware.Recoverer)
 	r.Handle("/metrics", promhttp.Handler())
-
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
-
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/", userController.List)  // GET /users
 		r.Post("/", userController.Save) // POST /users
 	})
 
 	log.Infof("[main] Web server started at :8080")
-	http.ListenAndServe(":8080", r)
+	err = http.ListenAndServe(":8080", r)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

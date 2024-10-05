@@ -20,7 +20,7 @@ func (m *metricsRecord) IncrementTotalRequest(tags ...string) {
 func NewMetricsRecord() MetricsRecord {
 	counter := promauto.NewCounterVec(prometheus.CounterOpts{
 		Name: "requests_total",
-		Help: "The total number of requests",
+		Help: "The total number of http_requests",
 	}, []string{"method", "path", "status_code"})
 
 	return &metricsRecord{

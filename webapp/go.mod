@@ -32,6 +32,7 @@ require (
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/swaggo/files v1.0.1 // indirect
+	github.com/urfave/negroni v1.0.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/tools v0.25.0 // indirect

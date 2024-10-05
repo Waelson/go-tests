@@ -47,4 +47,8 @@ swagger:
 	mv internal/docs/swagger.json internal/docs/swagger.yaml docs/specs
 	@echo "Done!"
 
+k6:
+	@echo "Running k6 tests..."
+	k6 run ../load_tests/k6/script.js
+
 .PHONY: test coverage clean fmt lint all
